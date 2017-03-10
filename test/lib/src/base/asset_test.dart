@@ -19,8 +19,9 @@ import "package:test/test.dart";
 import "package:gltf/gltf.dart";
 
 void main() {
-  const String VERSION = "version";  //should we import members.dart?
-  const String VALUE_NOT_IN_LIST = "VALUE_NOT_IN_LIST";  // should we import errors.dart?
+  const String VERSION = "version"; //should we import members.dart?
+  const String VALUE_NOT_IN_LIST =
+      "VALUE_NOT_IN_LIST"; // should we import errors.dart?
   const String UNDEFINED_PROPERTY = "UNDEFINED_PROPERTY";
   const String TYPE_MISMATCH = "TYPE_MISMATCH";
 

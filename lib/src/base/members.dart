@@ -123,7 +123,6 @@ const String BYTE_LENGTH = "byteLength";
 const List<String> BUFFER_MEMBERS = const <String>[
   URI,
   BYTE_LENGTH,
-  TYPE,
   NAME
 ];
 

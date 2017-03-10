@@ -20,24 +20,19 @@ library gltf.core.buffer;
 import 'gltf_property.dart';
 
 class Buffer extends GltfChildOfRootProperty {
-  static const String ARRAYBUFFER = "arraybuffer";
-
   final Uri uri;
   final List<int> data;
   final int byteLength;
-  final String type;
-
-  Buffer._(this.uri, this.data, this.byteLength, this.type, String name,
+  
+  Buffer._(this.uri, this.data, this.byteLength, String name,
       Map<String, Object> extensions, Object extras)
       : super(name, extensions, extras);
 
   String toString([_]) =>
-      super.toString({URI: uri, BYTE_LENGTH: byteLength, TYPE: type});
+      super.toString({URI: uri, BYTE_LENGTH: byteLength});
 
   static Buffer fromMap(Map<String, Object> map, Context context) {
     if (context.validate) checkMembers(map, BUFFER_MEMBERS, context);
-
-    const List<String> typesEnum = const <String>[ARRAYBUFFER];
 
     var byteLength = getInt(map, BYTE_LENGTH, context, min: 0, req: true);
 
@@ -75,7 +70,6 @@ class Buffer extends GltfChildOfRootProperty {
         uri,
         data,
         byteLength,
-        getString(map, TYPE, context, list: typesEnum, def: ARRAYBUFFER),
         getName(map, context),
         getExtensions(map, Buffer, context),
         getExtras(map));

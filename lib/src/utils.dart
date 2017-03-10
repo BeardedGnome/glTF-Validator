@@ -467,8 +467,7 @@ void resolveList/*<T>*/(List<String> sourceList, List/*<T>*/ targetList,
       final element = map[id];
       if (element != null) {
         targetList.add(element);
-        if (handleNode != null)
-          handleNode((element as dynamic/*=Node*/), id);
+        if (handleNode != null) handleNode((element as dynamic/*=Node*/), id);
       } else {
         context
             .addIssue(GltfError.UNRESOLVED_REFERENCE, name: name, args: [id]);

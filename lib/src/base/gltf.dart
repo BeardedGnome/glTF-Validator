@@ -170,6 +170,37 @@ class Gltf extends GltfProperty {
       }
     }
 
+    // Helper function for converting JSON dictionary containing a List to a Map of proper glTF objects
+    Map<String, dynamic/*=T*/ > toMapFromList/*<T>*/(
+        String name, FromMapFunction fromMap,
+        {bool req: false, int minItems: 0}) {
+      resetPath();
+
+      final itemList =
+          getMapList(map, name, context, req: req, minItems: minItems);
+
+      if (itemList != null) {
+        if (itemList.isNotEmpty) {
+          final items = <String, dynamic/*=T*/ >{};
+          context.path.add(name);
+          int index = 0;
+          for (final item in itemList) {
+            context.path.add(index.toString());
+            items[index.toString()] = fromMap(item, context) as dynamic/*=T*/;
+            context.path.removeLast();
+            ++index;
+          }
+          return items;
+        } else {
+          if (req)
+            context.addIssue(GltfError.ROOT_DICTIONARY_EMPTY, name: name);
+          return <String, dynamic/*=T*/ >{};
+        }
+      } else {
+        return <String, dynamic/*=T*/ >{};
+      }
+    }
+
     // Helper function for converting JSON dictionary to proper glTF object
     Object/*=T*/ toValue/*<T>*/(String name, FromMapFunction fromMap,
         {bool req: false}) {
@@ -187,8 +218,9 @@ class Gltf extends GltfProperty {
 
     final animations = toMap/*<Animation>*/(ANIMATIONS, Animation.fromMap);
 
-    final Map<String, Buffer> buffers =
-        toMap/*<Buffer>*/(BUFFERS, Buffer.fromMap, req: true);
+    final Map<String, Buffer> buffers = toMapFromList/*<Buffer>*/(
+        BUFFERS, Buffer.fromMap,
+        req: true, minItems: 1);
 
     final bufferViews =
         toMap/*<BufferView>*/(BUFFER_VIEWS, BufferView.fromMap, req: true);
