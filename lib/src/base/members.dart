@@ -133,6 +133,7 @@ const List<String> BUFFER_VIEW_MEMBERS = const <String>[
   BUFFER,
   BYTE_OFFSET,
   BYTE_LENGTH,
+  BYTE_STRIDE,
   TARGET,
   NAME
 ];

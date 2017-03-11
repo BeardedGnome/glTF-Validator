@@ -222,8 +222,9 @@ class Gltf extends GltfProperty {
         BUFFERS, Buffer.fromMap,
         req: true, minItems: 1);
 
-    final bufferViews =
-        toMap/*<BufferView>*/(BUFFER_VIEWS, BufferView.fromMap, req: true);
+    final bufferViews = toMapFromList/*<BufferView>*/(
+        BUFFER_VIEWS, BufferView.fromMap,
+        req: true, minItems: 1);
 
     final cameras = toMap/*<Camera>*/(CAMERAS, Camera.fromMap);
 
