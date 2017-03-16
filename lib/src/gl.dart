@@ -83,6 +83,12 @@ const List<int> ELEMENT_ARRAY_TYPES = const <int>[
   UNSIGNED_INT,
 ];
 
+const List<int> ACCESSOR_SPARCE_INDICES_COMPONENT_TYPES = const <int>[
+  UNSIGNED_BYTE,
+  UNSIGNED_SHORT,
+  UNSIGNED_INT,
+];
+
 const int ALPHA = 6406;
 const int RGB = 6407;
 const int RGBA = 6408;

@@ -30,7 +30,6 @@ void main() {
   const String BYTE_STRIDE = "byteStride";
   const String TARGET = "target";
   const String BUFFERS = "buffers";
-  const String URI = "uri";
 
   test("An empty Buffer View is invalid", () {
     Map<String, Object> map = new Map();
@@ -204,7 +203,7 @@ void main() {
 
     Map<String, Object> gltfMap = new Map();
     gltfMap[BUFFERS] = [
-      {URI: "", BYTE_LENGTH: 1}
+      {BYTE_LENGTH: 1}
     ];
     Context gltfContext = new Context();
     Gltf gltf = new Gltf.fromMap(gltfMap, gltfContext);

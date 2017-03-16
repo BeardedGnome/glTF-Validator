@@ -21,8 +21,7 @@ import "package:gltf/gltf.dart";
 void main() {
   const String UNDEFINED_PROPERTY =
       "UNDEFINED_PROPERTY"; // should we import errors.dart?
-  const String URI = "uri"; //should we import members.dart?
-  const String BYTE_LENGTH = "byteLength";
+  const String BYTE_LENGTH = "byteLength"; //should we import members.dart?
 
   test("An empty Buffer is invalid", () {
     Map<String, Object> map = new Map();
@@ -31,15 +30,13 @@ void main() {
     Buffer.fromMap(map, context);
 
     expect(context.errors.isEmpty, false);
-    expect(context.errors.length, 2);
-    expect(context.errors.first.type, UNDEFINED_PROPERTY);
-    expect(context.errors.last.type, UNDEFINED_PROPERTY);
+    expect(context.errors.length, 1);
+    expect(context.errors[0].type, UNDEFINED_PROPERTY);
     expect(context.warnings.isEmpty, true);
   });
 
   test("Minimum to create a validiated buffer", () {
     Map<String, Object> map = new Map();
-    map[URI] = "";
     map[BYTE_LENGTH] = 0;
     Context context = new Context();
 

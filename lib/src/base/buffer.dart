@@ -36,7 +36,7 @@ class Buffer extends GltfChildOfRootProperty {
 
     var byteLength = getInt(map, BYTE_LENGTH, context, min: 0, req: true);
 
-    final uriString = getString(map, URI, context, req: true);
+    final uriString = getString(map, URI, context);
 
     Uri uri;
     List<int> data;

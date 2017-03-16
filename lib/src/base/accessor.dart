@@ -23,19 +23,17 @@ import 'package:gltf/src/gl.dart' as gl;
 class Accessor extends GltfChildOfRootProperty implements Linkable {
   final String _bufferViewId;
   final int byteOffset;
-  final int byteStride;
   final int componentType;
+  final bool normalized;
   final int count;
   final String type;
-  final bool normalized;
   final List<num> max;
   final List<num> min;
+  final AccessorSparse accessorSparse;
 
   int get byteLength =>
-      (byteStride > 0
-              ? byteStride
-              : gl.COMPONENT_TYPE_LENGTHS[componentType] *
-                  ACCESSOR_TYPES_LENGTHS[type]) *
+      (gl.COMPONENT_TYPE_LENGTHS[componentType] *
+              ACCESSOR_TYPES_LENGTHS[type]) *
           (count - 1) +
       gl.COMPONENT_TYPE_LENGTHS[componentType] * ACCESSOR_TYPES_LENGTHS[type];
 
@@ -44,13 +42,13 @@ class Accessor extends GltfChildOfRootProperty implements Linkable {
   Accessor._(
       this._bufferViewId,
       this.byteOffset,
-      this.byteStride,
       this.componentType,
+      this.normalized,
       this.count,
       this.type,
-      this.normalized,
       this.max,
       this.min,
+      this.accessorSparse,
       String name,
       Map<String, Object> extensions,
       Object extras)
@@ -59,48 +57,59 @@ class Accessor extends GltfChildOfRootProperty implements Linkable {
   String toString([_]) => super.toString({
         BUFFER_VIEW: _bufferViewId,
         BYTE_OFFSET: byteOffset,
-        BYTE_STRIDE: byteStride,
         COMPONENT_TYPE: componentType,
+        NORMALIZED: normalized,
         COUNT: count,
         TYPE: type,
-        NORMALIZED: normalized,
         MAX: max,
-        MIN: min
+        MIN: min,
+        SPARSE: accessorSparse
       });
 
   static Accessor fromMap(Map<String, Object> map, Context context) {
     if (context.validate) checkMembers(map, ACCESSORS_MEMBERS, context);
 
-    final byteOffset = getInt(map, BYTE_OFFSET, context, req: true, min: 0);
-    final byteStride =
-        getInt(map, BYTE_STRIDE, context, min: 0, max: 255, def: 0);
+    final byteOffset = getInt(map, BYTE_OFFSET, context, min: 0, def: 0);
     final componentType = getInt(map, COMPONENT_TYPE, context,
         req: true, list: gl.COMPONENT_TYPE_LENGTHS.keys);
+
+    final normalized = getBool(map, NORMALIZED, context, def: false);
 
     final count = getInt(map, COUNT, context, req: true, min: 1);
     final type = getString(map, TYPE, context,
         req: true, list: ACCESSOR_TYPES_LENGTHS.keys);
 
-    final normalized = getBool(map, NORMALIZED, context, def: false);
-
     List<num> max;
     List<num> min;
-    if (type != null && componentType != null) {
-      if (componentType == gl.FLOAT) {
-        min = getNumList(map, MIN, context,
-            lengthsList: [ACCESSOR_TYPES_LENGTHS[type]], req: true);
-        max = getNumList(map, MAX, context,
-            lengthsList: [ACCESSOR_TYPES_LENGTHS[type]], req: true);
-      } else {
-        min = getGlIntList(map, MIN, context,
-            req: true,
-            length: ACCESSOR_TYPES_LENGTHS[type],
-            type: componentType);
-        max = getGlIntList(map, MAX, context,
-            req: true,
-            length: ACCESSOR_TYPES_LENGTHS[type],
-            type: componentType);
-      }
+    int minValue;
+    int maxValue;
+    if (componentType != null && componentType != gl.FLOAT) {
+      minValue = gl.TYPE_MINS[componentType];
+      maxValue = gl.TYPE_MAXS[componentType];
+    }
+    if (type != null) {
+      min = getNumList(map, MIN, context,
+          req: true,
+          min: minValue,
+          max: maxValue,
+          minItems: 1,
+          maxItems: 16,
+          lengthsList: [ACCESSOR_TYPES_LENGTHS[type]]);
+      max = getNumList(map, MAX, context,
+          req: true,
+          min: minValue,
+          max: maxValue,
+          minItems: 1,
+          maxItems: 16,
+          lengthsList: [ACCESSOR_TYPES_LENGTHS[type]]);
+    }
+
+    AccessorSparse sparse;
+    final sparseMap = getMap(map, SPARSE, context);
+    if (sparseMap.isNotEmpty) {
+      context.path.add(SPARSE);
+      sparse = AccessorSparse.fromMap(sparseMap, context);
+      context.path.removeLast();
     }
 
     if (context.validate) {
@@ -119,43 +128,24 @@ class Accessor extends GltfChildOfRootProperty implements Linkable {
         }
       }
 
-      if (byteOffset != null &&
-          byteStride != null &&
-          componentType != null &&
-          type != null) {
-        final attributeLength = gl.COMPONENT_TYPE_LENGTHS[componentType] *
-            ACCESSOR_TYPES_LENGTHS[type];
-
+      if (byteOffset != null && componentType != null && type != null) {
         if (byteOffset % gl.COMPONENT_TYPE_LENGTHS[componentType] != 0) {
           context.addIssue(GltfError.ACCESSOR_MULTIPLE_COMPONENT_TYPE,
               name: BYTE_OFFSET,
               args: [byteOffset, gl.COMPONENT_TYPE_LENGTHS[componentType]]);
         }
-
-        if (byteStride > 0) {
-          if (byteStride < attributeLength) {
-            context.addIssue(GltfError.ACCESSOR_SMALL_BYTESTRIDE,
-                name: BYTE_STRIDE, args: [byteStride, attributeLength]);
-          }
-
-          if (byteStride % gl.COMPONENT_TYPE_LENGTHS[componentType] != 0) {
-            context.addIssue(GltfError.ACCESSOR_MULTIPLE_COMPONENT_TYPE,
-                name: BYTE_STRIDE,
-                args: [byteStride, gl.COMPONENT_TYPE_LENGTHS[componentType]]);
-          }
-        }
       }
     }
     return new Accessor._(
-        getId(map, BUFFER_VIEW, context),
+        getInt(map, BUFFER_VIEW, context).toString(), // tests needed
         byteOffset,
-        byteStride,
         componentType,
+        normalized,
         count,
         type,
-        normalized,
         max,
         min,
+        sparse,
         getName(map, context),
         getExtensions(map, Accessor, context),
         getExtras(map));
@@ -164,15 +154,8 @@ class Accessor extends GltfChildOfRootProperty implements Linkable {
   void link(Gltf gltf, Context context) {
     bufferView = gltf.bufferViews[_bufferViewId];
 
-    if (context.validate && _bufferViewId != null) {
-      if (bufferView == null) {
-        context.addIssue(GltfError.UNRESOLVED_REFERENCE,
-            name: BUFFER_VIEW, args: [_bufferViewId]);
-        return;
-      }
-
+    if (context.validate && _bufferViewId != null && bufferView != null) {
       if (byteOffset != null &&
-          byteStride != null &&
           componentType != null &&
           count != null &&
           type != null) {
@@ -217,6 +200,163 @@ class Accessor extends GltfChildOfRootProperty implements Linkable {
         if (bufferView.target != gl.ARRAY_BUFFER && normalized == true) {
           context.addIssue(GltfWarning.NORMALIZED_NON_ARRAY_BUFFER,
               name: NORMALIZED);
+        }
+      }
+    }
+
+    if (accessorSparse != null) accessorSparse.link(gltf, context);
+  }
+}
+
+class AccessorSparse extends GltfProperty implements Linkable {
+  final int count;
+  final AccessorSparseIndices indices;
+  final AccessorSparseValues values;
+
+  AccessorSparse._(this.count, this.indices, this.values,
+      Map<String, Object> extensions, Object extras)
+      : super(extensions, extras);
+
+  String toString([_]) =>
+      super.toString({COUNT: count, INDICES: indices, VALUES: values});
+
+  static AccessorSparse fromMap(Map<String, Object> map, Context context) {
+    if (context.validate) checkMembers(map, ACCESSORS_SPARSE_MEMBERS, context);
+
+    final indicesMap = getMap(map, INDICES, context);
+    context.path.add(INDICES);
+    final AccessorSparseIndices indices =
+        AccessorSparseIndices.fromMap(indicesMap, context);
+    context.path.removeLast();
+
+    final valuesMap = getMap(map, VALUES, context);
+    context.path.add(VALUES);
+    final AccessorSparseValues values =
+        AccessorSparseValues.fromMap(valuesMap, context);
+    context.path.removeLast();
+
+    return new AccessorSparse._(
+        getInt(map, COUNT, context, req: true, min: 1),
+        indices,
+        values,
+        getExtensions(map, AccessorSparse, context),
+        getExtras(map));
+  }
+
+  void link(Gltf gltf, Context context) {
+    indices.link(gltf, context);
+    values.link(gltf, context);
+  }
+}
+
+class AccessorSparseIndices extends GltfProperty implements Linkable {
+  final String _bufferViewId;
+  final int byteOffset;
+  final int componentType;
+
+  BufferView bufferView;
+
+  AccessorSparseIndices._(this._bufferViewId, this.byteOffset,
+      this.componentType, Map<String, Object> extensions, Object extras)
+      : super(extensions, extras);
+
+  String toString([_]) => super.toString({
+        BUFFER_VIEW: _bufferViewId,
+        BYTE_OFFSET: byteOffset,
+        COMPONENT_TYPE: componentType
+      });
+
+  static AccessorSparseIndices fromMap(
+      Map<String, Object> map, Context context) {
+    if (context.validate)
+      checkMembers(map, ACCESSORS_SPARSE_INDICES_MEMBERS, context);
+
+    return new AccessorSparseIndices._(
+        getInt(map, BUFFER_VIEW, context, req: true).toString(),
+        getInt(map, BYTE_OFFSET, context, min: 0, def: 0),
+        getInt(map, COMPONENT_TYPE, context,
+            req: true, list: gl.ACCESSOR_SPARCE_INDICES_COMPONENT_TYPES),
+        getExtensions(map, AccessorSparseIndices, context),
+        getExtras(map));
+  }
+
+  void link(Gltf gltf, Context context) {
+    bufferView = gltf.bufferViews[_bufferViewId];
+
+    if (context.validate && _bufferViewId != null && bufferView != null) {
+      if (byteOffset != null && componentType != null) {
+        if (byteOffset > bufferView.byteLength) {
+          context.addIssue(GltfError.ACCESSOR_TOO_LONG,
+              name: BYTE_OFFSET,
+              args: [byteOffset, _bufferViewId, bufferView.byteLength]);
+        }
+      }
+
+      if (byteOffset != null &&
+          componentType != null &&
+          bufferView.byteOffset != null &&
+          (bufferView.byteOffset + byteOffset) %
+                  gl.COMPONENT_TYPE_LENGTHS[componentType] !=
+              0) {
+        context.addIssue(GltfError.ACCESSOR_TOTAL_MULTIPLE_COMPONENT_TYPE,
+            name: BYTE_OFFSET,
+            args: [
+              bufferView.byteOffset + byteOffset,
+              gl.COMPONENT_TYPE_LENGTHS[componentType]
+            ]);
+      }
+
+      if (componentType != null && bufferView.target != null) {
+        if (componentType == gl.UNSIGNED_INT &&
+            bufferView.target != gl.ELEMENT_ARRAY_BUFFER) {
+          context.addIssue(GltfError.ACCESSOR_UINT_NO_ELEMENT_ARRAY,
+              name: COMPONENT_TYPE);
+        }
+
+        if (bufferView.target == gl.ELEMENT_ARRAY_BUFFER &&
+            !gl.ELEMENT_ARRAY_TYPES.contains(componentType)) {
+          context.addIssue(GltfError.ACCESSOR_INVALID_ELEMENT_ARRAY_TYPE,
+              name: COMPONENT_TYPE, args: [componentType]);
+        }
+      }
+    }
+  }
+}
+
+class AccessorSparseValues extends GltfProperty implements Linkable {
+  final String _bufferViewId;
+  final int byteOffset;
+
+  BufferView bufferView;
+
+  AccessorSparseValues._(this._bufferViewId, this.byteOffset,
+      Map<String, Object> extensions, Object extras)
+      : super(extensions, extras);
+
+  String toString([_]) =>
+      super.toString({BUFFER_VIEW: _bufferViewId, BYTE_OFFSET: byteOffset});
+
+  static AccessorSparseValues fromMap(
+      Map<String, Object> map, Context context) {
+    if (context.validate)
+      checkMembers(map, ACCESSORS_SPARSE_VALUES_MEMBERS, context);
+
+    return new AccessorSparseValues._(
+        getInt(map, BUFFER_VIEW, context, req: true).toString(),
+        getInt(map, BYTE_OFFSET, context, min: 0, def: 0),
+        getExtensions(map, AccessorSparseValues, context),
+        getExtras(map));
+  }
+
+  void link(Gltf gltf, Context context) {
+    bufferView = gltf.bufferViews[_bufferViewId];
+
+    if (context.validate && _bufferViewId != null && bufferView != null) {
+      if (byteOffset != null) {
+        if (byteOffset > bufferView.byteLength) {
+          context.addIssue(GltfError.ACCESSOR_TOO_LONG,
+              name: BYTE_OFFSET,
+              args: [byteOffset, _bufferViewId, bufferView.byteLength]);
         }
       }
     }

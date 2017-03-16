@@ -213,8 +213,8 @@ class Gltf extends GltfProperty {
 
     final asset = toValue/*<Asset>*/(ASSET, Asset.fromMap, req: true);
 
-    final accessors =
-        toMap/*<Accessor>*/(ACCESSORS, Accessor.fromMap, req: true);
+    final accessors = toMapFromList/*<Accessor>*/(ACCESSORS, Accessor.fromMap,
+        req: true, minItems: 1);
 
     final animations = toMap/*<Animation>*/(ANIMATIONS, Animation.fromMap);
 

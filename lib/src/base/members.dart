@@ -31,24 +31,24 @@ const String NAME = "name";
 // Accessor
 const String BUFFER_VIEW = "bufferView";
 const String BYTE_OFFSET = "byteOffset";
-const String BYTE_STRIDE = "byteStride";
 const String COMPONENT_TYPE = "componentType";
 const String COUNT = "count";
 const String TYPE = "type";
 const String NORMALIZED = "normalized";
 const String MAX = "max";
 const String MIN = "min";
+const String SPARSE = "sparse";
 
 const List<String> ACCESSORS_MEMBERS = const <String>[
   BUFFER_VIEW,
   BYTE_OFFSET,
-  BYTE_STRIDE,
   COMPONENT_TYPE,
+  NORMALIZED,
   COUNT,
   TYPE,
-  NORMALIZED,
   MAX,
   MIN,
+  SPARSE,
   NAME
 ];
 
@@ -70,6 +70,26 @@ const Map<String, int> ACCESSOR_TYPES_LENGTHS = const <String, int>{
   MAT3: 9,
   MAT4: 16
 };
+
+// Accessor Sparse
+const List<String> ACCESSORS_SPARSE_MEMBERS = const <String>[
+  COUNT,
+  INDICES,
+  VALUES
+];
+
+// Accessor Sparse Indices
+const List<String> ACCESSORS_SPARSE_INDICES_MEMBERS = const <String>[
+  BUFFER_VIEW,
+  BYTE_OFFSET,
+  COMPONENT_TYPE
+];
+
+// Accessor Sparse Values
+const List<String> ACCESSORS_SPARSE_VALUES_MEMBERS = const <String>[
+  BUFFER_VIEW,
+  BYTE_OFFSET
+];
 
 // Animation
 const String CHANNELS = "channels";
@@ -128,6 +148,7 @@ const List<String> BUFFER_MEMBERS = const <String>[
 
 // BufferView
 const String BUFFER = "buffer";
+const String BYTE_STRIDE = "byteStride";
 
 const List<String> BUFFER_VIEW_MEMBERS = const <String>[
   BUFFER,
