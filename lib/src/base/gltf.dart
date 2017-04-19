@@ -213,14 +213,18 @@ class Gltf extends GltfProperty {
 
     final asset = toValue/*<Asset>*/(ASSET, Asset.fromMap, req: true);
 
-    final accessors = toMapFromList/*<Accessor>*/(ACCESSORS, Accessor.fromMap);
+    final accessors = toMapFromList/*<Accessor>*/(ACCESSORS, Accessor.fromMap,
+        req: true, minItems: 1);
 
     final animations = toMap/*<Animation>*/(ANIMATIONS, Animation.fromMap);
 
-    final Map<String, Buffer> buffers = toMapFromList/*<Buffer>*/(BUFFERS, Buffer.fromMap);
+    final Map<String, Buffer> buffers = toMapFromList/*<Buffer>*/(
+        BUFFERS, Buffer.fromMap,
+        req: true, minItems: 1);
 
     final bufferViews = toMapFromList/*<BufferView>*/(
-        BUFFER_VIEWS, BufferView.fromMap);
+        BUFFER_VIEWS, BufferView.fromMap,
+        req: true, minItems: 1);
 
     final cameras = toMap/*<Camera>*/(CAMERAS, Camera.fromMap);
 
