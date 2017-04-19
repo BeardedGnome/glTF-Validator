@@ -220,5 +220,7 @@ void main() {
 
     expect(context.errors.isEmpty, true);
     expect(context.warnings.isEmpty, true);
+
+    expect(bufferView.buffer, isNotNull);
   });
 }

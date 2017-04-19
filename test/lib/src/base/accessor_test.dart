@@ -152,6 +152,7 @@ void main() {
 
   test("Link gltf to Accessor", () {
     Map<String, Object> map = new Map();
+    map[BUFFER_VIEW] = 0;
     map[COMPONENT_TYPE] = 5120;
     map[COUNT] = 1;
     map[TYPE] = "SCALAR";
@@ -160,6 +161,9 @@ void main() {
     Context context = new Context();
 
     Map<String, Object> gltfMap = new Map();
+    gltfMap[BUFFER_VIEWS] = [
+      {BYTE_LENGTH: 1}
+    ];
     Context gltfContext = new Context();
     Gltf gltf = new Gltf.fromMap(gltfMap, gltfContext);
 
@@ -175,10 +179,13 @@ void main() {
 
     expect(context.errors.isEmpty, true);
     expect(context.warnings.isEmpty, true);
+
+    expect(accessor.bufferView, isNotNull);
   });
 
   test("Link gltf to Sparse Accessor", () {
     Map<String, Object> map = new Map();
+    map[BUFFER_VIEW] = 0;
     map[COMPONENT_TYPE] = 5120;
     map[COUNT] = 1;
     map[TYPE] = "SCALAR";
@@ -210,6 +217,8 @@ void main() {
 
     expect(context.errors.isEmpty, true);
     expect(context.warnings.isEmpty, true);
+
+    expect(accessor.bufferView, isNotNull);
   });
 
 // Accessor Sparce Values Tests
@@ -260,6 +269,8 @@ void main() {
 
     expect(context.errors.isEmpty, true);
     expect(context.warnings.isEmpty, true);
+
+    expect(values.bufferView, isNotNull);
   });
 
 // Accessor Sparse Indices Tests
@@ -313,6 +324,8 @@ void main() {
 
     expect(context.errors.isEmpty, true);
     expect(context.warnings.isEmpty, true);
+
+    expect(indices.bufferView, isNotNull);
   });
 
 // Accessor Sparse Tests

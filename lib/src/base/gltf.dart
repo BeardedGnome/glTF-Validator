@@ -284,7 +284,8 @@ class Gltf extends GltfProperty {
       ANIMATIONS: animations,
       BUFFER_VIEWS: bufferViews,
       MATERIALS: materials,
-      TEXTURES: textures
+      TEXTURES: textures,
+      IMAGES: images
     };
 
     void linkCollection(String key, Map<String, GltfProperty> collection) {

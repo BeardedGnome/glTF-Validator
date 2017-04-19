@@ -37,6 +37,7 @@ class BufferView extends GltfChildOfRootProperty implements Linkable {
         BUFFER: _bufferId,
         BYTE_OFFSET: byteOffset,
         BYTE_LENGTH: byteLength,
+        BYTE_STRIDE: byteStride,
         TARGET: target
       });
 

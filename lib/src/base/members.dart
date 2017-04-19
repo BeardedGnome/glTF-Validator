@@ -129,6 +129,7 @@ const List<String> ANIMATION_SAMPLER_MEMBERS = const <String>[
 const String COPYRIGHT = "copyright";
 const String GENERATOR = "generator";
 const String VERSION = "version";
+const String MIN_VERSION = "minVersion";
 
 const List<String> ASSET_MEMBERS = const <String>[
   COPYRIGHT,
@@ -241,7 +242,8 @@ const List<String> GLTF_MEMBERS = const <String>[
 ];
 
 // Image
-const List<String> IMAGE_MEMBERS = const <String>[URI, NAME];
+const String MIMETYPE = "mimeType";
+const List<String> IMAGE_MEMBERS = const <String>[URI, MIMETYPE, BUFFER_VIEW, NAME];
 
 // Material
 const String TECHNIQUE = "technique";

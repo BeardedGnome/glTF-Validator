@@ -23,9 +23,10 @@ class Asset extends GltfProperty {
   final String copyright;
   final String generator;
   final String version;
+  final String minVersion;
 
   Asset._(this.copyright, this.generator,
-      this.version, Map<String, Object> extensions, Object extras)
+      this.version, this.minVersion, Map<String, Object> extensions, Object extras)
       : super(extensions, extras);
 
   String toString([_]) => super.toString({
@@ -37,10 +38,12 @@ class Asset extends GltfProperty {
   static Asset fromMap(Map<String, Object> map, Context context) {
     if (context.validate) checkMembers(map, ASSET_MEMBERS, context);
 
+    RegExp versionExp = new RegExp(r"^[0-9]+\.[0-9]+$");
     return new Asset._(
         getString(map, COPYRIGHT, context),
         getString(map, GENERATOR, context),
-        getString(map, VERSION, context, req: true, list: ["2.0"]),
+        getString(map, VERSION, context, req: true, regexp: versionExp),
+        getString(map, MIN_VERSION, context, regexp: versionExp),
         getExtensions(map, Asset, context),
         getExtras(map));
   }

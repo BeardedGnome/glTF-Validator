@@ -20,10 +20,9 @@ import "package:gltf/gltf.dart";
 
 void main() {
   const String VERSION = "version"; //should we import members.dart?
-  const String VALUE_NOT_IN_LIST =
-      "VALUE_NOT_IN_LIST"; // should we import errors.dart?
-  const String UNDEFINED_PROPERTY = "UNDEFINED_PROPERTY";
+  const String UNDEFINED_PROPERTY = "UNDEFINED_PROPERTY"; // should we import errors.dart?
   const String TYPE_MISMATCH = "TYPE_MISMATCH";
+  const String PATTERN_MISMATCH = "PATTERN_MISMATCH";
 
   test("An empty Asset is invalid", () {
     Map<String, Object> map = new Map();
@@ -37,16 +36,14 @@ void main() {
     expect(context.warnings.isEmpty, true);
   });
 
-  test("Verify version 1.1 is invalid", () {
+  test("Verify version 1.1 is valid", () {
     Map<String, Object> map = new Map();
     map[VERSION] = "1.1";
     Context context = new Context();
 
     Asset.fromMap(map, context);
 
-    expect(context.errors.isEmpty, false);
-    expect(context.errors.length, 1);
-    expect(context.errors.first.type, VALUE_NOT_IN_LIST);
+    expect(context.errors.isEmpty, true);
     expect(context.warnings.isEmpty, true);
   });
 
@@ -63,14 +60,42 @@ void main() {
     expect(context.warnings.isEmpty, true);
   });
 
-  test("Verify version 2.0 is valid", () {
+  test("Verify missing ones digit is invalid", () {
     Map<String, Object> map = new Map();
-    map[VERSION] = "2.0";
+    map[VERSION] = ".1";
     Context context = new Context();
 
     Asset.fromMap(map, context);
 
-    expect(context.errors.isEmpty, true);
+    expect(context.errors.isEmpty, false);
+    expect(context.errors.length, 1);
+    expect(context.errors.first.type, PATTERN_MISMATCH);
+    expect(context.warnings.isEmpty, true);
+  });
+
+  test("Verify missing tenths digit is invalid", () {
+    Map<String, Object> map = new Map();
+    map[VERSION] = "1.";
+    Context context = new Context();
+
+    Asset.fromMap(map, context);
+
+    expect(context.errors.isEmpty, false);
+    expect(context.errors.length, 1);
+    expect(context.errors.first.type, PATTERN_MISMATCH);
+    expect(context.warnings.isEmpty, true);
+  });
+
+    test("Verify missing decimal point is invalid", () {
+    Map<String, Object> map = new Map();
+    map[VERSION] = "10";
+    Context context = new Context();
+
+    Asset.fromMap(map, context);
+
+    expect(context.errors.isEmpty, false);
+    expect(context.errors.length, 1);
+    expect(context.errors.first.type, PATTERN_MISMATCH);
     expect(context.warnings.isEmpty, true);
   });
 }
