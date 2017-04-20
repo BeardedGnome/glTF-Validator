@@ -121,6 +121,9 @@ test("Image with invalid mime type", () {
 
     Image image = Image.fromMap(map, context);
 
+    expect(context.errors.isEmpty, true);
+    expect(context.warnings.isEmpty, true);
+
     image.link(gltf, context);
 
     expect(context.errors.isEmpty, true);
@@ -145,6 +148,9 @@ test("Image with invalid mime type", () {
     expect(gltfContext.warnings.isEmpty, true);
 
     Image image = Image.fromMap(map, context);
+
+    expect(context.errors.isEmpty, true);
+    expect(context.warnings.isEmpty, true);
 
     image.link(gltf, context);
 

@@ -432,16 +432,10 @@ const List<String> TECHNIQUE_STATES_FUNCTIONS_MEMBERS = const <String>[
 ];
 
 // Texture
-const String FORMAT = "format";
-const String INTERNAL_FORMAT = "internalFormat";
 const String SOURCE = "source";
 
 const List<String> TEXTURE_MEMBERS = const <String>[
-  FORMAT,
-  INTERNAL_FORMAT,
   SAMPLER,
   SOURCE,
-  TARGET,
-  TYPE,
   NAME
 ];

@@ -237,7 +237,7 @@ class Gltf extends GltfProperty {
 
     final scenes = toMap/*<Scene>*/(SCENES, Scene.fromMap);
 
-    final sceneId = getId(map, SCENE, context);
+    final sceneId = getId(map, SCENE, context, req: false);
 
     final scene = scenes[sceneId];
 
@@ -248,7 +248,7 @@ class Gltf extends GltfProperty {
     final skins = toMap/*<Skin>*/(SKINS, Skin.fromMap);
 
     final Map<String, Texture> textures =
-        toMap/*<Texture>*/(TEXTURES, Texture.fromMap);
+        toMapFromList/*<Texture>*/(TEXTURES, Texture.fromMap, minItems: 1);
 
     resetPath();
 
