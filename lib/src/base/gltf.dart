@@ -213,34 +213,31 @@ class Gltf extends GltfProperty {
 
     final asset = toValue/*<Asset>*/(ASSET, Asset.fromMap, req: true);
 
-    final accessors = toMapFromList/*<Accessor>*/(ACCESSORS, Accessor.fromMap,
-        req: true, minItems: 1);
+    final accessors = toMapFromList/*<Accessor>*/(ACCESSORS, Accessor.fromMap, minItems: 1);
 
     final animations = toMap/*<Animation>*/(ANIMATIONS, Animation.fromMap);
 
     final Map<String, Buffer> buffers = toMapFromList/*<Buffer>*/(
-        BUFFERS, Buffer.fromMap,
-        req: true, minItems: 1);
+        BUFFERS, Buffer.fromMap, minItems: 1);
 
     final bufferViews = toMapFromList/*<BufferView>*/(
-        BUFFER_VIEWS, BufferView.fromMap,
-        req: true, minItems: 1);
+        BUFFER_VIEWS, BufferView.fromMap, minItems: 1);
 
     final cameras = toMap/*<Camera>*/(CAMERAS, Camera.fromMap);
 
-    final images = toMapFromList/*<Image>*/(IMAGES, Image.fromMap);
+    final images = toMapFromList/*<Image>*/(IMAGES, Image.fromMap, minItems: 1);
 
     final materials = toMap/*<Material>*/(MATERIALS, Material.fromMap);
 
-    final meshes = toMap/*<Mesh>*/(MESHES, Mesh.fromMap, req: true);
+    final meshes = toMap/*<Mesh>*/(MESHES, Mesh.fromMap);
 
     final nodes = toMap/*<Node>*/(NODES, Node.fromMap);
 
-    final samplers = toMap/*<Sampler>*/(SAMPLERS, Sampler.fromMap);
+    final samplers = toMapFromList/*<Sampler>*/(SAMPLERS, Sampler.fromMap, minItems: 1);
 
     final scenes = toMap/*<Scene>*/(SCENES, Scene.fromMap);
 
-    final sceneId = getId(map, SCENE, context, req: false);
+    final sceneId = getId(map, SCENE, context);
 
     final scene = scenes[sceneId];
 
