@@ -31,24 +31,24 @@ const String NAME = "name";
 // Accessor
 const String BUFFER_VIEW = "bufferView";
 const String BYTE_OFFSET = "byteOffset";
-const String BYTE_STRIDE = "byteStride";
 const String COMPONENT_TYPE = "componentType";
 const String COUNT = "count";
 const String TYPE = "type";
 const String NORMALIZED = "normalized";
 const String MAX = "max";
 const String MIN = "min";
+const String SPARSE = "sparse";
 
 const List<String> ACCESSORS_MEMBERS = const <String>[
   BUFFER_VIEW,
   BYTE_OFFSET,
-  BYTE_STRIDE,
   COMPONENT_TYPE,
+  NORMALIZED,
   COUNT,
   TYPE,
-  NORMALIZED,
   MAX,
   MIN,
+  SPARSE,
   NAME
 ];
 
@@ -70,6 +70,28 @@ const Map<String, int> ACCESSOR_TYPES_LENGTHS = const <String, int>{
   MAT3: 9,
   MAT4: 16
 };
+
+// Accessor Sparse
+const String VALUES = "values";
+
+const List<String> ACCESSORS_SPARSE_MEMBERS = const <String>[
+  COUNT,
+  INDICES,
+  VALUES
+];
+
+// Accessor Sparse Indices
+const List<String> ACCESSORS_SPARSE_INDICES_MEMBERS = const <String>[
+  BUFFER_VIEW,
+  BYTE_OFFSET,
+  COMPONENT_TYPE
+];
+
+// Accessor Sparse Values
+const List<String> ACCESSORS_SPARSE_VALUES_MEMBERS = const <String>[
+  BUFFER_VIEW,
+  BYTE_OFFSET
+];
 
 // Animation
 const String CHANNELS = "channels";
@@ -108,22 +130,14 @@ const List<String> ANIMATION_SAMPLER_MEMBERS = const <String>[
 // Asset
 const String COPYRIGHT = "copyright";
 const String GENERATOR = "generator";
-const String PREMULTIPLIED_ALPHA = "premultipliedAlpha";
-const String PROFILE = "profile";
 const String VERSION = "version";
+const String MIN_VERSION = "minVersion";
 
 const List<String> ASSET_MEMBERS = const <String>[
   COPYRIGHT,
   GENERATOR,
-  PREMULTIPLIED_ALPHA,
-  PROFILE,
   VERSION
 ];
-
-// AssetProfile
-const String API = "api";
-
-const List<String> ASSET_PROFILE_MEMBERS = const <String>[API, VERSION];
 
 // Buffer
 const String URI = "uri";
@@ -132,17 +146,18 @@ const String BYTE_LENGTH = "byteLength";
 const List<String> BUFFER_MEMBERS = const <String>[
   URI,
   BYTE_LENGTH,
-  TYPE,
   NAME
 ];
 
 // BufferView
 const String BUFFER = "buffer";
+const String BYTE_STRIDE = "byteStride";
 
 const List<String> BUFFER_VIEW_MEMBERS = const <String>[
   BUFFER,
   BYTE_OFFSET,
   BYTE_LENGTH,
+  BYTE_STRIDE,
   TARGET,
   NAME
 ];
@@ -196,12 +211,9 @@ const String IMAGES = "images";
 const String MATERIALS = "materials";
 const String MESHES = "meshes";
 const String NODES = "nodes";
-const String PROGRAMS = "programs";
 const String SCENE = "scene";
 const String SCENES = "scenes";
-const String SHADERS = "shaders";
 const String SKINS = "skins";
-const String TECHNIQUES = "techniques";
 const String TEXTURES = "textures";
 
 const List<String> GLTF_MEMBERS = const <String>[
@@ -218,24 +230,82 @@ const List<String> GLTF_MEMBERS = const <String>[
   MATERIALS,
   MESHES,
   NODES,
-  PROGRAMS,
   SAMPLERS,
   SCENE,
   SCENES,
-  SHADERS,
   SKINS,
-  TECHNIQUES,
   TEXTURES
 ];
 
 // Image
-const List<String> IMAGE_MEMBERS = const <String>[URI, NAME];
+const String MIMETYPE = "mimeType";
+const List<String> IMAGE_MEMBERS = const <String>[URI, MIMETYPE, BUFFER_VIEW, NAME];
 
 // Material
-const String TECHNIQUE = "technique";
-const String VALUES = "values";
+const String PBR_METALLIC_ROUGHNESS = "pbrMetallicRoughness";
+const String NORMAL_TEXTURE = "normalTexture";
+const String OCCLUSION_TEXTURE = "occlusionTexture";
+const String EMISSIVE_TEXTURE = "emissiveTexture";
+const String EMISSIVE_FACTOR = "emissiveFactor";
+const String ALPHA_MODE = "alphaMode";
+const String ALPHA_CUTOFF = "alphaCutoff";
+const String DOUBLE_SIDED = "doubleSided";
 
-const List<String> MATERIAL_MEMBERS = const <String>[TECHNIQUE, VALUES, NAME];
+const String OPAQUE = "OPAQUE";
+const String MASK = "MASK";
+const String BLEND = "BLEND";
+
+const List<String> MATERIAL_MEMBERS = const <String>[
+  PBR_METALLIC_ROUGHNESS,
+  NORMAL_TEXTURE,
+  OCCLUSION_TEXTURE,
+  EMISSIVE_TEXTURE,
+  EMISSIVE_FACTOR,
+  ALPHA_MODE,
+  ALPHA_CUTOFF,
+  DOUBLE_SIDED,  
+  NAME
+];
+
+// Material PBR Metallic Roughness
+const String BASE_COLOR_FACTOR = "baseColorFactor";
+const String BASE_COLOR_TEXTURE = "baseColorTexture";
+const String METALLIC_FACTOR = "metallicFactor";
+const String ROUGHNESS_FACTOR = "roughnessFactor";
+const String METALLIC_ROUGHNESS_TEXTURE = "metallicRoughnessTexture";
+
+const List<String> MATERIAL_PBR_METALLIC_ROUGHNESS_MEMBERS = const <String>[
+  BASE_COLOR_FACTOR,
+  BASE_COLOR_TEXTURE,
+  METALLIC_FACTOR,
+  ROUGHNESS_FACTOR,
+  METALLIC_ROUGHNESS_TEXTURE
+];
+
+// Material Normal Texture
+const String INDEX = "index";
+const String TEX_COORD = "texCoord";
+
+const List<String> MATERIAL_NORMAL_TEXTURE_MEMBERS = const <String>[
+  INDEX,
+  TEX_COORD,
+  SCALE
+];
+
+// Material Occlusion Texture
+const String STRENGTH = "strength";
+
+const List<String> MATERIAL_OCCLUSION_TEXTURE_MEMBERS = const <String>[
+  INDEX,
+  TEX_COORD,
+  STRENGTH
+];
+
+// Texture Info
+const List<String> TEXTURE_INFO_MEMBERS = const <String>[
+  INDEX,
+  TEX_COORD
+];
 
 // Mesh
 const String PRIMITIVES = "primitives";
@@ -280,17 +350,6 @@ const List<String> NODE_MEMBERS = const <String>[
   NAME
 ];
 
-// Program
-const String FRAGMENT_SHADER = "fragmentShader";
-const String VERTEX_SHADER = "vertexShader";
-
-const List<String> PROGRAM_MEMBERS = const <String>[
-  ATTRIBUTES,
-  FRAGMENT_SHADER,
-  VERTEX_SHADER,
-  NAME
-];
-
 // Sampler
 const String MAG_FILTER = "magFilter";
 const String MIN_FILTER = "minFilter";
@@ -308,9 +367,6 @@ const List<String> SAMPLER_MEMBERS = const <String>[
 // Scene
 const List<String> SCENE_MEMBERS = const <String>[NODES, NAME];
 
-// Shader
-const List<String> SHADER_MEMBERS = const <String>[URI, TYPE, NAME];
-
 // Skin
 const String BIND_SHAPE_MATRIX = "bindShapeMatrix";
 const String INVERSE_BIND_MATRICES = "inverseBindMatrices";
@@ -322,25 +378,6 @@ const List<String> SKIN_MEMBERS = const <String>[
   JOINT_NAMES,
   NAME
 ];
-
-// Technique
-const String PROGRAM = "program";
-const String UNIFORMS = "uniforms";
-const String STATES = "states";
-
-const List<String> TECHNIQUE_MEMBERS = const <String>[
-  PARAMETERS,
-  ATTRIBUTES,
-  PROGRAM,
-  UNIFORMS,
-  STATES,
-  NAME
-];
-
-// TechniqueParameter
-const String NODE = "node";
-const String SEMANTIC = "semantic";
-const String VALUE = "value";
 
 // Attribute semantics
 const String POSITION = "POSITION";
@@ -367,14 +404,6 @@ const String MODELINVERSETRANSPOSE = "MODELINVERSETRANSPOSE";
 const String MODELVIEWINVERSETRANSPOSE = "MODELVIEWINVERSETRANSPOSE";
 const String VIEWPORT = "VIEWPORT";
 const String JOINTMATRIX = "JOINTMATRIX";
-
-const List<String> TECHNIQUE_PARAMETER_MEMBERS = const <String>[
-  COUNT,
-  NODE,
-  TYPE,
-  SEMANTIC,
-  VALUE
-];
 
 const List<String> ATTRIBUTE_SEMANTIC_MEMBERS = const <String>[
   POSITION,
@@ -423,52 +452,11 @@ const Map<String, Semantic> UNIFORM_SEMANTICS = const <String, Semantic>{
   JOINTMATRIX: const Semantic(gl.FLOAT_MAT4, true)
 };
 
-// TechniqueStates
-const String ENABLE = "enable";
-const String FUNCTIONS = "functions";
-
-const List<String> TECHNIQUE_STATES_MEMBERS = const <String>[ENABLE, FUNCTIONS];
-
-// TechniqueStatesFunctions
-const String BLEND_COLOR = "blendColor";
-const String BLEND_EQUATION_SEPARATE = "blendEquationSeparate";
-const String BLEND_FUNC_SEPARATE = "blendFuncSeparate";
-const String COLOR_MASK = "colorMask";
-const String CULL_FACE = "cullFace";
-const String DEPTH_FUNC = "depthFunc";
-const String DEPTH_MASK = "depthMask";
-const String DEPTH_RANGE = "depthRange";
-const String FRONT_FACE = "frontFace";
-const String LINE_WIDTH = "lineWidth";
-const String POLYGON_OFFSET = "polygonOffset";
-const String SCISSOR = "scissor";
-
-const List<String> TECHNIQUE_STATES_FUNCTIONS_MEMBERS = const <String>[
-  BLEND_COLOR,
-  BLEND_EQUATION_SEPARATE,
-  BLEND_FUNC_SEPARATE,
-  COLOR_MASK,
-  CULL_FACE,
-  DEPTH_FUNC,
-  DEPTH_MASK,
-  DEPTH_RANGE,
-  FRONT_FACE,
-  LINE_WIDTH,
-  POLYGON_OFFSET,
-  SCISSOR
-];
-
 // Texture
-const String FORMAT = "format";
-const String INTERNAL_FORMAT = "internalFormat";
 const String SOURCE = "source";
 
 const List<String> TEXTURE_MEMBERS = const <String>[
-  FORMAT,
-  INTERNAL_FORMAT,
   SAMPLER,
   SOURCE,
-  TARGET,
-  TYPE,
   NAME
 ];

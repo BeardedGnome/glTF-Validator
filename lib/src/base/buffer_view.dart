@@ -24,11 +24,12 @@ class BufferView extends GltfChildOfRootProperty implements Linkable {
   final String _bufferId;
   final int byteOffset;
   final int byteLength;
+  final int byteStride;
   final int target;
 
   Buffer buffer;
 
-  BufferView._(this._bufferId, this.byteOffset, this.byteLength, this.target,
+  BufferView._(this._bufferId, this.byteOffset, this.byteLength, this.byteStride, this.target,
       String name, Map<String, Object> extensions, Object extras)
       : super(name, extensions, extras);
 
@@ -36,6 +37,7 @@ class BufferView extends GltfChildOfRootProperty implements Linkable {
         BUFFER: _bufferId,
         BYTE_OFFSET: byteOffset,
         BYTE_LENGTH: byteLength,
+        BYTE_STRIDE: byteStride,
         TARGET: target
       });
 
@@ -43,9 +45,10 @@ class BufferView extends GltfChildOfRootProperty implements Linkable {
     if (context.validate) checkMembers(map, BUFFER_VIEW_MEMBERS, context);
 
     return new BufferView._(
-        getId(map, BUFFER, context),
+        getInt(map, BUFFER, context, req: true, min: 0).toString(),
         getInt(map, BYTE_OFFSET, context, req: true, min: 0),
         getInt(map, BYTE_LENGTH, context, req: true, min: 0),
+        getInt(map, BYTE_STRIDE, context, min: 0, max: 255, def: 0),
         getInt(map, TARGET, context, list: gl.TARGETS),
         getName(map, context),
         getExtensions(map, BufferView, context),

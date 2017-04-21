@@ -260,44 +260,6 @@ List<num> getNumList(Map<String, Object> map, String name, Context context,
   return null;
 }
 
-List<int> getGlIntList(Map<String, Object> map, String name, Context context,
-    {bool req: false, int type, int length}) {
-  final value = map[name];
-  if (value is List/*=List<Object>*/) {
-    if (value.length != length) {
-      context.addIssue(GltfError.ARRAY_LENGTH_NOT_IN_LIST,
-          name: name, args: [value, length]);
-    }
-    var wrongMemberFound = false;
-    for (final v in value) {
-      if (v is int) {
-        if (type != null) {
-          final min = gl.TYPE_MINS[type];
-          final max = gl.TYPE_MAXS[type];
-          if ((v < min) || (v > max)) {
-            context.addIssue(GltfError.INVALID_GL_VALUE,
-                name: name, args: [v, gl.TYPE_NAMES[type]]);
-            wrongMemberFound = true;
-          }
-        }
-      } else {
-        context.addIssue(GltfError.ARRAY_TYPE_MISMATCH,
-            name: name, args: [v, "integer"]);
-        wrongMemberFound = true;
-      }
-    }
-    if (wrongMemberFound) return null;
-    return value as dynamic/*=List<int>*/;
-  } else if (value == null) {
-    if (!req) return null;
-    context.addIssue(GltfError.UNDEFINED_PROPERTY, name: name);
-  } else {
-    context.addIssue(GltfError.TYPE_MISMATCH,
-        name: name, args: [value, "number[]"]);
-  }
-  return null;
-}
-
 List<String> getStringList(
     Map<String, Object> map, String name, Context context,
     {bool req: false,
@@ -467,8 +429,7 @@ void resolveList/*<T>*/(List<String> sourceList, List/*<T>*/ targetList,
       final element = map[id];
       if (element != null) {
         targetList.add(element);
-        if (handleNode != null)
-          handleNode((element as dynamic/*=Node*/), id);
+        if (handleNode != null) handleNode((element as dynamic/*=Node*/), id);
       } else {
         context
             .addIssue(GltfError.UNRESOLVED_REFERENCE, name: name, args: [id]);

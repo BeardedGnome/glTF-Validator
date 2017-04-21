@@ -58,9 +58,8 @@ class Sampler extends GltfChildOfRootProperty {
     ];
 
     return new Sampler._(
-        getInt(map, MAG_FILTER, context, list: magFiltersEnum, def: gl.NEAREST),
-        getInt(map, MIN_FILTER, context,
-            list: minFiltersEnum, def: gl.NEAREST_MIPMAP_LINEAR),
+        getInt(map, MAG_FILTER, context, list: magFiltersEnum),
+        getInt(map, MIN_FILTER, context, list: minFiltersEnum),
         getInt(map, WRAP_S, context, list: wrapFiltersEnum, def: gl.REPEAT),
         getInt(map, WRAP_T, context, list: wrapFiltersEnum, def: gl.REPEAT),
         getName(map, context),

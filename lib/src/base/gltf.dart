@@ -32,12 +32,9 @@ import 'image.dart';
 import 'material.dart';
 import 'mesh.dart';
 import 'node.dart';
-import 'program.dart';
 import 'sampler.dart';
 import 'scene.dart';
-import 'shader.dart';
 import 'skin.dart';
-import 'technique.dart';
 import 'texture.dart';
 
 export 'accessor.dart';
@@ -50,12 +47,9 @@ export 'image.dart';
 export 'material.dart';
 export 'mesh.dart';
 export 'node.dart';
-export 'program.dart';
 export 'sampler.dart';
 export 'scene.dart';
-export 'shader.dart';
 export 'skin.dart';
-export 'technique.dart';
 export 'texture.dart';
 
 class Gltf extends GltfProperty {
@@ -72,14 +66,11 @@ class Gltf extends GltfProperty {
   final Map<String, Material> materials;
   final Map<String, Mesh> meshes;
   final Map<String, Node> nodes;
-  final Map<String, Program> programs;
   final Map<String, Sampler> samplers;
   final String sceneId;
   final Scene scene;
   final Map<String, Scene> scenes;
-  final Map<String, Shader> shaders;
   final Map<String, Skin> skins;
-  final Map<String, Technique> techniques;
   final Map<String, Texture> textures;
 
   final Map<String, Node> joints = <String, Node>{};
@@ -98,14 +89,11 @@ class Gltf extends GltfProperty {
       this.materials,
       this.meshes,
       this.nodes,
-      this.programs,
       this.samplers,
       this.sceneId,
       this.scene,
       this.scenes,
-      this.shaders,
       this.skins,
-      this.techniques,
       this.textures,
       Map<String, Object> extensions,
       Object extras)
@@ -182,6 +170,37 @@ class Gltf extends GltfProperty {
       }
     }
 
+    // Helper function for converting JSON dictionary containing a List to a Map of proper glTF objects
+    Map<String, dynamic/*=T*/ > toMapFromList/*<T>*/(
+        String name, FromMapFunction fromMap,
+        {bool req: false, int minItems: 0}) {
+      resetPath();
+
+      final itemList =
+          getMapList(map, name, context, req: req, minItems: minItems);
+
+      if (itemList != null) {
+        if (itemList.isNotEmpty) {
+          final items = <String, dynamic/*=T*/ >{};
+          context.path.add(name);
+          int index = 0;
+          for (final item in itemList) {
+            context.path.add(index.toString());
+            items[index.toString()] = fromMap(item, context) as dynamic/*=T*/;
+            context.path.removeLast();
+            ++index;
+          }
+          return items;
+        } else {
+          if (req)
+            context.addIssue(GltfError.ROOT_DICTIONARY_EMPTY, name: name);
+          return <String, dynamic/*=T*/ >{};
+        }
+      } else {
+        return <String, dynamic/*=T*/ >{};
+      }
+    }
+
     // Helper function for converting JSON dictionary to proper glTF object
     Object/*=T*/ toValue/*<T>*/(String name, FromMapFunction fromMap,
         {bool req: false}) {
@@ -194,30 +213,27 @@ class Gltf extends GltfProperty {
 
     final asset = toValue/*<Asset>*/(ASSET, Asset.fromMap, req: true);
 
-    final accessors =
-        toMap/*<Accessor>*/(ACCESSORS, Accessor.fromMap, req: true);
+    final accessors = toMapFromList/*<Accessor>*/(ACCESSORS, Accessor.fromMap, minItems: 1);
 
     final animations = toMap/*<Animation>*/(ANIMATIONS, Animation.fromMap);
 
-    final Map<String, Buffer> buffers =
-        toMap/*<Buffer>*/(BUFFERS, Buffer.fromMap, req: true);
+    final Map<String, Buffer> buffers = toMapFromList/*<Buffer>*/(
+        BUFFERS, Buffer.fromMap, minItems: 1);
 
-    final bufferViews =
-        toMap/*<BufferView>*/(BUFFER_VIEWS, BufferView.fromMap, req: true);
+    final bufferViews = toMapFromList/*<BufferView>*/(
+        BUFFER_VIEWS, BufferView.fromMap, minItems: 1);
 
     final cameras = toMap/*<Camera>*/(CAMERAS, Camera.fromMap);
 
-    final images = toMap/*<Image>*/(IMAGES, Image.fromMap);
+    final images = toMapFromList/*<Image>*/(IMAGES, Image.fromMap, minItems: 1);
 
-    final materials = toMap/*<Material>*/(MATERIALS, Material.fromMap);
+    final materials = toMapFromList/*<Material>*/(MATERIALS, Material.fromMap, minItems: 1);
 
-    final meshes = toMap/*<Mesh>*/(MESHES, Mesh.fromMap, req: true);
+    final meshes = toMap/*<Mesh>*/(MESHES, Mesh.fromMap);
 
     final nodes = toMap/*<Node>*/(NODES, Node.fromMap);
 
-    final programs = toMap/*<Program>*/(PROGRAMS, Program.fromMap);
-
-    final samplers = toMap/*<Sampler>*/(SAMPLERS, Sampler.fromMap);
+    final samplers = toMapFromList/*<Sampler>*/(SAMPLERS, Sampler.fromMap, minItems: 1);
 
     final scenes = toMap/*<Scene>*/(SCENES, Scene.fromMap);
 
@@ -229,14 +245,10 @@ class Gltf extends GltfProperty {
       context.addIssue(GltfError.UNRESOLVED_REFERENCE,
           name: SCENE, args: [sceneId]);
 
-    final shaders = toMap/*<Shader>*/(SHADERS, Shader.fromMap);
-
     final skins = toMap/*<Skin>*/(SKINS, Skin.fromMap);
 
-    final techniques = toMap/*<Technique>*/(TECHNIQUES, Technique.fromMap);
-
     final Map<String, Texture> textures =
-        toMap/*<Texture>*/(TEXTURES, Texture.fromMap);
+        toMapFromList/*<Texture>*/(TEXTURES, Texture.fromMap, minItems: 1);
 
     resetPath();
 
@@ -254,14 +266,11 @@ class Gltf extends GltfProperty {
         materials,
         meshes,
         nodes,
-        programs,
         samplers,
         sceneId,
         scene,
         scenes,
-        shaders,
         skins,
-        techniques,
         textures,
         getExtensions(map, Gltf, context),
         getExtras(map));
@@ -272,9 +281,8 @@ class Gltf extends GltfProperty {
       ANIMATIONS: animations,
       BUFFER_VIEWS: bufferViews,
       MATERIALS: materials,
-      PROGRAMS: programs,
-      TECHNIQUES: techniques,
-      TEXTURES: textures
+      TEXTURES: textures,
+      IMAGES: images
     };
 
     void linkCollection(String key, Map<String, GltfProperty> collection) {
@@ -356,14 +364,6 @@ class Gltf extends GltfProperty {
     }
     if (externalImages.isNotEmpty) externalResources["images"] = externalImages;
 
-    final externalShaders = <String>[];
-    for (final shader in shaders.values) {
-      if (shader.uri != null) externalShaders.add(shader.uri.toString());
-    }
-    if (externalShaders.isNotEmpty) {
-      externalResources["shaders"] = externalShaders;
-    }
-
     if (externalResources.isNotEmpty) {
       info["externalResources"] = externalResources;
     }
@@ -386,14 +386,6 @@ class Gltf extends GltfProperty {
     }
     info["primitivesCount"] = primitivesCount;
     info["maxAttributesUsed"] = maxAttributesUsed;
-
-    info["programsCount"] = programs.length;
-
-    int maxUniformsUsed = 0;
-    for (final technique in techniques.values) {
-      maxUniformsUsed = max(maxUniformsUsed, technique.uniforms.length);
-    }
-    info["maxUniformsUsed"] = maxUniformsUsed;
 
     return info;
   }
