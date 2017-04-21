@@ -227,7 +227,7 @@ class Gltf extends GltfProperty {
 
     final images = toMapFromList/*<Image>*/(IMAGES, Image.fromMap, minItems: 1);
 
-    final materials = toMap/*<Material>*/(MATERIALS, Material.fromMap);
+    final materials = toMapFromList/*<Material>*/(MATERIALS, Material.fromMap, minItems: 1);
 
     final meshes = toMap/*<Mesh>*/(MESHES, Mesh.fromMap);
 

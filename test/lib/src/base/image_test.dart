@@ -110,9 +110,6 @@ test("Image with invalid mime type", () {
     Context context = new Context();
 
     Map<String, Object> gltfMap = new Map();
-    gltfMap[BUFFER_VIEWS] = [
-      {BYTE_LENGTH: 1}
-    ];
     Context gltfContext = new Context();
     Gltf gltf = new Gltf.fromMap(gltfMap, gltfContext);
 

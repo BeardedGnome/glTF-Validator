@@ -72,6 +72,8 @@ const Map<String, int> ACCESSOR_TYPES_LENGTHS = const <String, int>{
 };
 
 // Accessor Sparse
+const String VALUES = "values";
+
 const List<String> ACCESSORS_SPARSE_MEMBERS = const <String>[
   COUNT,
   INDICES,
@@ -209,12 +211,9 @@ const String IMAGES = "images";
 const String MATERIALS = "materials";
 const String MESHES = "meshes";
 const String NODES = "nodes";
-const String PROGRAMS = "programs";
 const String SCENE = "scene";
 const String SCENES = "scenes";
-const String SHADERS = "shaders";
 const String SKINS = "skins";
-const String TECHNIQUES = "techniques";
 const String TEXTURES = "textures";
 
 const List<String> GLTF_MEMBERS = const <String>[
@@ -231,13 +230,10 @@ const List<String> GLTF_MEMBERS = const <String>[
   MATERIALS,
   MESHES,
   NODES,
-  PROGRAMS,
   SAMPLERS,
   SCENE,
   SCENES,
-  SHADERS,
   SKINS,
-  TECHNIQUES,
   TEXTURES
 ];
 
@@ -246,10 +242,70 @@ const String MIMETYPE = "mimeType";
 const List<String> IMAGE_MEMBERS = const <String>[URI, MIMETYPE, BUFFER_VIEW, NAME];
 
 // Material
-const String TECHNIQUE = "technique";
-const String VALUES = "values";
+const String PBR_METALLIC_ROUGHNESS = "pbrMetallicRoughness";
+const String NORMAL_TEXTURE = "normalTexture";
+const String OCCLUSION_TEXTURE = "occlusionTexture";
+const String EMISSIVE_TEXTURE = "emissiveTexture";
+const String EMISSIVE_FACTOR = "emissiveFactor";
+const String ALPHA_MODE = "alphaMode";
+const String ALPHA_CUTOFF = "alphaCutoff";
+const String DOUBLE_SIDED = "doubleSided";
 
-const List<String> MATERIAL_MEMBERS = const <String>[TECHNIQUE, VALUES, NAME];
+const String OPAQUE = "OPAQUE";
+const String MASK = "MASK";
+const String BLEND = "BLEND";
+
+const List<String> MATERIAL_MEMBERS = const <String>[
+  PBR_METALLIC_ROUGHNESS,
+  NORMAL_TEXTURE,
+  OCCLUSION_TEXTURE,
+  EMISSIVE_TEXTURE,
+  EMISSIVE_FACTOR,
+  ALPHA_MODE,
+  ALPHA_CUTOFF,
+  DOUBLE_SIDED,  
+  NAME
+];
+
+// Material PBR Metallic Roughness
+const String BASE_COLOR_FACTOR = "baseColorFactor";
+const String BASE_COLOR_TEXTURE = "baseColorTexture";
+const String METALLIC_FACTOR = "metallicFactor";
+const String ROUGHNESS_FACTOR = "roughnessFactor";
+const String METALLIC_ROUGHNESS_TEXTURE = "metallicRoughnessTexture";
+
+const List<String> MATERIAL_PBR_METALLIC_ROUGHNESS_MEMBERS = const <String>[
+  BASE_COLOR_FACTOR,
+  BASE_COLOR_TEXTURE,
+  METALLIC_FACTOR,
+  ROUGHNESS_FACTOR,
+  METALLIC_ROUGHNESS_TEXTURE
+];
+
+// Material Normal Texture
+const String INDEX = "index";
+const String TEX_COORD = "texCoord";
+
+const List<String> MATERIAL_NORMAL_TEXTURE_MEMBERS = const <String>[
+  INDEX,
+  TEX_COORD,
+  SCALE
+];
+
+// Material Occlusion Texture
+const String STRENGTH = "strength";
+
+const List<String> MATERIAL_OCCLUSION_TEXTURE_MEMBERS = const <String>[
+  INDEX,
+  TEX_COORD,
+  STRENGTH
+];
+
+// Texture Info
+const List<String> TEXTURE_INFO_MEMBERS = const <String>[
+  INDEX,
+  TEX_COORD
+];
 
 // Mesh
 const String PRIMITIVES = "primitives";
@@ -395,41 +451,6 @@ const Map<String, Semantic> UNIFORM_SEMANTICS = const <String, Semantic>{
   VIEWPORT: const Semantic(gl.FLOAT_VEC4),
   JOINTMATRIX: const Semantic(gl.FLOAT_MAT4, true)
 };
-
-// TechniqueStates
-const String ENABLE = "enable";
-const String FUNCTIONS = "functions";
-
-const List<String> TECHNIQUE_STATES_MEMBERS = const <String>[ENABLE, FUNCTIONS];
-
-// TechniqueStatesFunctions
-const String BLEND_COLOR = "blendColor";
-const String BLEND_EQUATION_SEPARATE = "blendEquationSeparate";
-const String BLEND_FUNC_SEPARATE = "blendFuncSeparate";
-const String COLOR_MASK = "colorMask";
-const String CULL_FACE = "cullFace";
-const String DEPTH_FUNC = "depthFunc";
-const String DEPTH_MASK = "depthMask";
-const String DEPTH_RANGE = "depthRange";
-const String FRONT_FACE = "frontFace";
-const String LINE_WIDTH = "lineWidth";
-const String POLYGON_OFFSET = "polygonOffset";
-const String SCISSOR = "scissor";
-
-const List<String> TECHNIQUE_STATES_FUNCTIONS_MEMBERS = const <String>[
-  BLEND_COLOR,
-  BLEND_EQUATION_SEPARATE,
-  BLEND_FUNC_SEPARATE,
-  COLOR_MASK,
-  CULL_FACE,
-  DEPTH_FUNC,
-  DEPTH_MASK,
-  DEPTH_RANGE,
-  FRONT_FACE,
-  LINE_WIDTH,
-  POLYGON_OFFSET,
-  SCISSOR
-];
 
 // Texture
 const String SOURCE = "source";
